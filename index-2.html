@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quanto conosci il mondo finanziario?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f6;
+  --black:#111;
+  --white:#fff;
+  --cream:#f3f1ec;
+  --gold:#c9973a;
+  --muted:#888;
+  --border:rgba(0,0,0,0.08);
+  --green:#1e5c3a;
+  --r:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--black);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* SCREENS */
+.screen{display:none;animation:fadeUp .5s ease both}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.wrap{max-width:560px;margin:0 auto;padding:3rem 1.25rem 5rem}
+
+/* INTRO */
+.intro-badge{
+  display:inline-block;padding:5px 14px;
+  border:1px solid var(--border);border-radius:99px;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1.5rem;
+}
+.intro-h{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,6vw,44px);
+  font-weight:900;line-height:1.15;
+  color:var(--black);margin-bottom:.875rem;
+}
+.intro-h em{font-style:italic;color:var(--gold)}
+.intro-p{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:2.5rem;font-weight:300;max-width:420px}
+.intro-stats{display:flex;gap:2rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.stat-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--black)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+.btn-start{
+  width:100%;padding:15px;
+  background:var(--black);color:var(--white);border:none;
+  border-radius:var(--r);font-family:'DM Sans',sans-serif;
+  font-size:15px;font-weight:500;letter-spacing:.03em;
+  cursor:pointer;transition:opacity .18s;
+}
+.btn-start:hover{opacity:.82}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:2rem}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-lbl{font-size:12px;color:var(--muted)}
+.prog-bar{height:3px;background:var(--cream);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:var(--black);border-radius:99px;transition:width .4s ease}
+
+/* QUESTION */
+.q-step{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.q-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(19px,3.5vw,26px);font-weight:700;
+  line-height:1.3;color:var(--black);margin-bottom:1.5rem;
+}
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+.opt{
+  display:flex;align-items:center;gap:13px;
+  padding:13px 16px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);cursor:pointer;
+  font-size:14px;font-family:'DM Sans',sans-serif;
+  color:var(--black);line-height:1.5;text-align:left;
+  transition:border-color .15s,background .15s;
+}
+.opt:hover{border-color:rgba(0,0,0,.25)}
+.opt.sel{border:2px solid var(--black);background:var(--cream)}
+.opt-l{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--cream);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;flex-shrink:0;
+  color:var(--muted);transition:background .15s,color .15s;
+}
+.opt.sel .opt-l{background:var(--black);color:var(--white);border-color:var(--black)}
+.btn-next{
+  width:100%;padding:13px;
+  background:var(--black);color:var(--white);border:none;
+  border-radius:var(--r);font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:500;cursor:pointer;
+  transition:opacity .15s;letter-spacing:.03em;
+}
+.btn-next:disabled{opacity:.2;cursor:not-allowed}
+.btn-next:not(:disabled):hover{opacity:.8}
+.btn-back{
+  background:transparent;color:var(--muted);border:none;
+  font-size:13px;font-family:'DM Sans',sans-serif;
+  cursor:pointer;padding:8px 0;display:block;margin-top:.5rem;
+}
+
+/* RESULT */
+.result-card{
+  background:var(--black);border-radius:20px;
+  padding:2.5rem 2rem;text-align:center;margin-bottom:1.5rem;
+  color:var(--white);
+}
+.score-ring{
+  width:100px;height:100px;border-radius:50%;
+  border:3px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.25rem;
+  font-family:'Playfair Display',serif;
+  font-size:36px;font-weight:900;color:var(--gold);
+}
+.result-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--white);
+  margin-bottom:.5rem;
+}
+.result-sub{font-size:14px;color:rgba(255,255,255,.65);line-height:1.65;font-weight:300}
+.result-msg{
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.25rem 1.5rem;
+  margin-bottom:1.5rem;
+}
+.result-msg-h{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;color:var(--black);margin-bottom:.375rem;
+}
+.result-msg-p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* GATE */
+.gate-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:20px;padding:2rem 1.75rem;
+}
+.gate-h{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--black);margin-bottom:.375rem;
+}
+.gate-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem}
+.fld{margin-bottom:11px}
+.fld label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px}
+.fld input{
+  width:100%;padding:12px 14px;
+  border:1px solid var(--border);border-radius:10px;
+  font-size:14px;font-family:'DM Sans',sans-serif;
+  color:var(--black);background:var(--cream);outline:none;
+  transition:border-color .15s;
+}
+.fld input:focus{border-color:var(--black);background:var(--white)}
+.fld input::placeholder{color:#bbb}
+.btn-unlock{
+  width:100%;padding:14px;margin-top:6px;
+  background:var(--black);color:var(--white);border:none;
+  border-radius:var(--r);font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:500;cursor:pointer;
+  transition:opacity .18s;letter-spacing:.03em;
+}
+.btn-unlock:hover{opacity:.82}
+.privacy{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5}
+
+/* VIDEO */
+.video-lbl{text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.875rem}
+.video-outer{
+  position:relative;border-radius:18px;overflow:hidden;
+  background:#000;aspect-ratio:16/9;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);margin-bottom:.875rem;
+}
+.video-outer iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-cap{text-align:center;font-size:13px;color:var(--muted);font-weight:300;margin-bottom:2.5rem}
+
+/* TALLY FORM */
+.tally-wrap{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:20px;padding:1.5rem 1.75rem;margin-bottom:1.5rem;
+}
+.tally-lbl{font-size:13px;font-weight:500;color:var(--black);margin-bottom:.875rem;text-align:center}
+
+/* CTA */
+.cta-card{
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:20px;padding:2rem;text-align:center;
+}
+.cta-h{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--black);margin-bottom:.5rem}
+.cta-sub{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:1.5rem;font-weight:300}
+.btn-cal{
+  display:block;width:100%;padding:14px;
+  background:var(--green);color:var(--white);border:none;
+  border-radius:var(--r);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;
+  transition:opacity .18s;margin-bottom:10px;letter-spacing:.03em;
+}
+.btn-cal:hover{opacity:.85}
+.or-row{display:flex;align-items:center;gap:12px;margin:4px 0 10px}
+.or-line{flex:1;height:1px;background:var(--border)}
+.or-txt{font-size:11px;color:var(--muted)}
+.btn-wa{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:13px;background:#25D366;color:var(--white);
+  border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;transition:opacity .18s;
+}
+.btn-wa:hover{opacity:.88}
+.btn-wa svg{width:17px;height:17px;fill:#fff;flex-shrink:0}
+
+.divider{display:flex;align-items:center;gap:12px;margin:2rem 0}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-txt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+footer{text-align:center;padding:2rem 1rem;font-size:11px;color:#ccc;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<!-- ═══ INTRO ═══ -->
+<div id="s-intro" class="screen active">
+  <div class="wrap">
+    <div class="intro-badge">Quiz gratuito · 2 minuti</div>
+    <h1 class="intro-h">Quanto conosci<br/>il mondo <em>finanziario?</em></h1>
+    <p class="intro-p">4 domande veloci per capire il tuo livello. Alla fine scopri il tuo punteggio da 1 a 10 — e cosa fare adesso.</p>
+    <div class="intro-stats">
+      <div><div class="stat-n">4</div><div class="stat-l">domande veloci</div></div>
+      <div><div class="stat-n">2 min</div><div class="stat-l">per completarlo</div></div>
+      <div><div class="stat-n">+200</div><div class="stat-l">persone aiutate</div></div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Inizia il quiz →</button>
+  </div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="s-quiz" class="screen">
+  <div class="wrap">
+    <div class="prog-wrap">
+      <div class="prog-top"><span class="prog-lbl" id="prog-lbl">Domanda 1 di 4</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:25%"></div></div>
+    </div>
+    <div class="q-step" id="q-step">01</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="opts" id="opts"></div>
+    <button class="btn-next" id="btn-next" disabled onclick="nextQ()">Avanti →</button>
+    <button class="btn-back" id="btn-back" onclick="prevQ()">← Indietro</button>
+  </div>
+</div>
+
+<!-- ═══ GATE ═══ -->
+<div id="s-gate" class="screen">
+  <div class="wrap">
+    <div class="gate-card">
+      <div style="text-align:center;margin-bottom:1rem">
+        <div style="font-size:28px;margin-bottom:.5rem">🔓</div>
+        <div class="gate-h">Il tuo risultato è pronto!</div>
+        <p class="gate-sub">Inserisci i tuoi dati per scoprire il tuo punteggio e accedere al video gratuito.</p>
+      </div>
+      <iframe data-tally-src="https://tally.so/embed/jak4EJ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="300" frameborder="0" marginheight="0" marginwidth="0" title="Form dati"></iframe>
+      <button class="btn-unlock" onclick="unlockResult()" style="margin-top:1rem">Scopri il mio risultato →</button>
+      <p class="privacy">🔒 Zero spam. Ti ricontatto io personalmente.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESULT ═══ -->
+<div id="s-result" class="screen">
+  <div class="wrap">
+    <div class="result-card">
+      <div class="score-ring" id="score-ring">8</div>
+      <div class="result-title" id="result-title">Dovresti iniziare subito</div>
+      <div class="result-sub" id="result-sub">Il tuo livello di urgenza è alto</div>
+    </div>
+    <div class="result-msg" id="result-msg">
+      <div class="result-msg-h" id="result-msg-h"></div>
+      <div class="result-msg-p" id="result-msg-p"></div>
+    </div>
+    <button class="btn-start" onclick="goScreen('s-video')" style="margin-top:.5rem">Guarda il video gratuito →</button>
+  </div>
+</div>
+
+<!-- ═══ VIDEO + FINALE ═══ -->
+<div id="s-video" class="screen">
+  <div class="wrap" style="max-width:700px">
+    <div class="video-lbl">Il tuo video è sbloccato 🎬</div>
+    <div class="video-outer">
+      <iframe src="https://www.youtube.com/embed/IoUd695HxNA?rel=0&modestbranding=1" allowfullscreen allow="autoplay;encrypted-media;picture-in-picture"></iframe>
+    </div>
+    <p class="video-cap">Guarda tutto il video — poi compila il form qui sotto 👇</p>
+
+    <div class="divider"><div class="div-line"></div><span class="div-txt">Compila per essere ricontattata</span><div class="div-line"></div></div>
+
+    <div class="tally-wrap">
+      <div class="tally-lbl">Compila qui sotto se vuoi capire meglio come accedere 👇</div>
+      <iframe data-tally-src="https://tally.so/embed/Me7ZrE?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="400" frameborder="0" marginheight="0" marginwidth="0" title="Form finale"></iframe>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><span class="div-txt">Prossimo passo</span><div class="div-line"></div></div>
+
+    <div class="cta-card">
+      <div class="cta-h">Parliamo direttamente</div>
+      <p class="cta-sub">Prenota una call gratuita di 20 minuti con me. Ti spiego tutto, nessun impegno.</p>
+      <button class="btn-cal" onclick="window.open('https://calendly.com/flaviacoman/zoom','_blank')">Prenota la tua call gratuita →</button>
+      <div class="or-row"><div class="or-line"></div><span class="or-txt">oppure</span><div class="or-line"></div></div>
+      <button class="btn-wa" onclick="window.open('https://wa.me/message/XOY4OWU6E3YVK1','_blank')">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Scrivimi su WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>Pagina creata con ❤️</footer>
+
+<script>
+var QUESTIONS = [
+  {
+    text: "Dove tieni i tuoi risparmi?",
+    opts: ["Tutto sul conto corrente","Ho qualcosa investito ma senza metodo","Investo regolarmente con una strategia","Non ho risparmi"],
+    scores: [3, 2, 0, 3]
+  },
+  {
+    text: "Quando ricevi i soldi, cosa fai prima?",
+    opts: ["Li spendo e poi vedo cosa avanza","Metto da parte una quota fissa","Prima investo, poi spendo il resto","Non ho un metodo preciso"],
+    scores: [3, 1, 0, 3]
+  },
+  {
+    text: "Sai dove e come investire i tuoi soldi?",
+    opts: ["No, non ne ho idea","Ho sentito qualcosa ma non so da dove iniziare","So qualcosa ma non mi sono mai mosso","Sì, ho già investito qualcosa"],
+    scores: [3, 2, 1, 0]
+  },
+  {
+    text: "Sai cos'è l'inflazione e come ti sta mangiando i soldi ogni anno?",
+    opts: ["No, non so cosa sia","Ho sentito il termine ma non ho capito bene","Sì, lo so ma non ho fatto nulla","Sì, e mi sto già proteggendo"],
+    scores: [3, 2, 1, 0]
+  }
+];
+
+var RESULTS = [
+  { min:0, max:3,  score:3, title:"Sei già sulla strada giusta", sub:"Hai già una buona consapevolezza finanziaria", h:"Ottimo punto di partenza", p:"Conosci le basi. Il prossimo passo è costruire un sistema solido e scalabile." },
+  { min:4, max:6,  score:6, title:"Sai che qualcosa non va", sub:"Hai consapevolezza ma non ancora un piano", h:"Sei a metà strada", p:"Capisci il problema ma non sai ancora come risolverlo. È esattamente il momento giusto per agire." },
+  { min:7, max:9,  score:8, title:"È urgente che tu inizi", sub:"I tuoi soldi stanno perdendo valore ogni giorno", h:"Il momento di agire è adesso", p:"Ogni mese che passa senza un piano, l'inflazione ti mangia i risparmi. Guardare il video ti darà un punto di partenza concreto." },
+  { min:10, max:12, score:10, title:"Devi assolutamente iniziare", sub:"Non puoi più aspettare", h:"Situazione critica — ma risolvibile", p:"Non hai ancora strumenti per proteggere e far crescere i tuoi soldi. La buona notizia? Partire da zero è possibile, con il metodo giusto." }
+];
+
+var cur = 0, answers = [], sel = null, totalScore = 0;
+var userData = {};
+
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function startQuiz() { cur = 0; answers = []; sel = null; renderQ(); goScreen('s-quiz'); }
+
+function renderQ() {
+  var q = QUESTIONS[cur];
+  var total = QUESTIONS.length;
+  document.getElementById('prog-lbl').textContent = 'Domanda ' + (cur+1) + ' di ' + total;
+  document.getElementById('prog-fill').style.width = ((cur+1)/total*100) + '%';
+  document.getElementById('q-step').textContent = String(cur+1).padStart(2,'0');
+  document.getElementById('q-text').textContent = q.text;
+  var grid = document.getElementById('opts');
+  grid.innerHTML = '';
+  var L = ['A','B','C','D'];
+  q.opts.forEach(function(o, i) {
+    var b = document.createElement('button');
+    b.className = 'opt' + (answers[cur] === i ? ' sel' : '');
+    b.innerHTML = '<span class="opt-l">' + L[i] + '</span><span>' + o + '</span>';
+    b.onclick = function(){ pickOpt(i); };
+    grid.appendChild(b);
+  });
+  sel = answers[cur] !== undefined ? answers[cur] : null;
+  document.getElementById('btn-next').disabled = sel === null;
+  document.getElementById('btn-back').style.visibility = cur === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = cur === QUESTIONS.length - 1 ? 'Vedi il mio risultato →' : 'Avanti →';
+}
+
+function pickOpt(i) {
+  sel = i; answers[cur] = i;
+  document.querySelectorAll('.opt').forEach(function(b, idx){ b.classList.toggle('sel', idx===i); });
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQ() {
+  if (sel === null) return;
+  if (cur < QUESTIONS.length - 1) { cur++; renderQ(); }
+  else goScreen('s-gate');
+}
+
+function prevQ() { if (cur > 0) { cur--; renderQ(); } }
+
+function showResult() {
+  totalScore = answers.reduce(function(acc, a, i){ return acc + QUESTIONS[i].scores[a]; }, 0);
+  var r = RESULTS.find(function(x){ return totalScore >= x.min && totalScore <= x.max; }) || RESULTS[RESULTS.length-1];
+  document.getElementById('score-ring').textContent = r.score + '/10';
+  document.getElementById('result-title').textContent = r.title;
+  document.getElementById('result-sub').textContent = r.sub;
+  document.getElementById('result-msg-h').textContent = r.h;
+  document.getElementById('result-msg-p').textContent = r.p;
+  goScreen('s-result');
+}
+
+function unlockResult() {
+  var nome = document.getElementById('f-nome').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var tel = document.getElementById('f-tel').value.trim();
+  if (!nome || !email || !tel) { alert('Compila tutti i campi per continuare.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Inserisci un\'email valida.'); return; }
+  userData = { nome:nome, email:email, tel:tel };
+  showResult();
+}
+
+function unlockVideo() {
+  var nome = document.getElementById('f-nome').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var tel = document.getElementById('f-tel').value.trim();
+  if (!nome || !email || !tel) { alert('Compila tutti i campi per continuare.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Inserisci un\'email valida.'); return; }
+  userData = { nome:nome, email:email, tel:tel };
+
+  // Send to Tally form 1 via redirect in background
+  goScreen('s-video');
+}
+</script>
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
